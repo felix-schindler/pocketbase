@@ -77,7 +77,6 @@ func superuserAuthToken(t testing.TB, app *tests.TestApp, email string) string {
 }
 
 func TestRecordAuthWithOAuth2Superusers(t *testing.T) {
-	t.Parallel()
 
 	testApp, err := tests.NewTestApp()
 	if err != nil {
