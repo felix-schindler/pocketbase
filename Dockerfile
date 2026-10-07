@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # --- admin UI (static files: build once natively, no QEMU) ---
-FROM --platform=$BUILDPLATFORM node:25-alpine AS ui
+FROM --platform=$BUILDPLATFORM node:lts-alpine AS ui
 WORKDIR /src/ui
 COPY ui/package.json ui/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
