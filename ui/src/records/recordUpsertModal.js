@@ -1340,7 +1340,51 @@ function authProvidersTab(collection, data) {
     const local = store({
         isLoading: false,
         externalAuths: [],
+        authMethods: {},
+        isLoadingMethods: false,
+        linkingProvider: "",
+        get isOwnSuperuser() {
+            return collection.name == "_superusers" && data.record?.id == app.store.superuser?.id;
+        },
+        get unlinkedProviders() {
+            const linked = new Set(local.externalAuths.map((e) => e.provider));
+            return (local.authMethods?.oauth2?.providers || []).filter((p) => !linked.has(p.name));
+        },
     });
+
+    async function loadAuthMethods() {
+        if (!local.isOwnSuperuser) {
+            return;
+        }
+        local.isLoadingMethods = true;
+        try {
+            local.authMethods = await app.pb.collection(collection.name).listAuthMethods();
+        } catch (err) {
+            if (!err?.isAbort) {
+                app.checkApiError(err);
+            }
+        }
+        local.isLoadingMethods = false;
+    }
+
+    async function linkProvider(providerName) {
+        if (local.linkingProvider) {
+            return;
+        }
+        local.linkingProvider = providerName;
+        try {
+            // authed call links the provider to the logged superuser
+            // (see apis.recordAuthWithOAuth2 fallbackAuthRecord)
+            await app.pb.collection(collection.name).authWithOAuth2({ provider: providerName });
+            app.toasts.success(`Successfully linked ${providerName}.`);
+            await loadExternalAuths();
+        } catch (err) {
+            app.checkApiError(err);
+            // reload anyway - the link may have been created before an MFA step
+            loadExternalAuths();
+        }
+        local.linkingProvider = "";
+    }
 
     async function loadExternalAuths() {
         local.isLoading = true;
@@ -1388,11 +1432,49 @@ function authProvidersTab(collection, data) {
     return [
         t.div(
             { className: "modal-content" },
+            () => {
+                if (!local.isOwnSuperuser) {
+                    return;
+                }
+                if (local.isLoadingMethods) {
+                    return t.div({ className: "block m-b-sm" }, t.div({ className: "skeleton-loader" }));
+                }
+                if (!local.unlinkedProviders.length) {
+                    return;
+                }
+                return t.div(
+                    { className: "block m-b-sm" },
+                    t.div(
+                        { className: "grid" },
+                        () => {
+                            return local.unlinkedProviders.map((provider) => {
+                                const label = provider.displayName || provider.name;
+                                return t.div(
+                                    { className: "col-6" },
+                                    t.button(
+                                        {
+                                            type: "button",
+                                            className: () =>
+                                                `btn block secondary ${
+                                                    local.linkingProvider == provider.name ? "loading" : ""
+                                                }`,
+                                            disabled: () => !!local.linkingProvider,
+                                            onclick: () => linkProvider(provider.name),
+                                        },
+                                        t.span({ className: "txt" }, "Link " + label),
+                                    ),
+                                );
+                            });
+                        },
+                    ),
+                );
+            },
             t.div(
                 {
                     className: "list",
                     onmount: () => {
                         loadExternalAuths();
+                        loadAuthMethods();
                     },
                 },
                 () => {
