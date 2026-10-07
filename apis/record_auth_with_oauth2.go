@@ -131,8 +131,14 @@ func recordAuthWithOAuth2(e *core.RequestEvent) error {
 	case fallbackAuthRecord != nil && fallbackAuthRecord.Collection().Id == form.collection.Id:
 		// fallback to the logged auth record (if any)
 		authRecord = fallbackAuthRecord
-	case authUser.Email != "":
+	case authUser.Email != "" && collection.Name != core.CollectionNameSuperusers:
 		// look for an existing auth record by the external auth record's email
+		//
+		// note: skipped for the superusers collection because a sign-in must never
+		// bind an unlinked provider to a superuser account (eg. an attacker
+		// controlling a provider account with the same email as a superuser).
+		// Superusers can only sign-in with a provider that was linked beforehand,
+		// either manually or by an already authenticated superuser.
 		authRecord, err = e.App.FindAuthRecordByEmail(form.collection.Id, authUser.Email)
 		if err != nil && !errors.Is(err, sql.ErrNoRows) {
 			return e.InternalServerError("Failed OAuth2 auth record check.", err)

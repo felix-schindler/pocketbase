@@ -90,10 +90,12 @@ func (app *BaseApp) registerSuperuserHooks() {
 			// don't allow name change even if executed with SaveNoValidate
 			e.Collection.Name = CollectionNameSuperusers
 
-			// for now don't allow superusers OAuth2 since we don't want
-			// to accidentally create a new superuser by just OAuth2 signin
-			e.Collection.OAuth2.Enabled = false
-			e.Collection.OAuth2.Providers = nil
+			// note: OAuth2 is allowed for superusers, but it must never be able
+			// to create a new superuser record (eg. from a fresh OAuth2 sign-in)
+			// nor link an unlinked provider to an existing superuser based only
+			// on a matching email. A superuser OAuth2 sign-in can only resolve
+			// to an already linked record or to the currently authenticated
+			// superuser (see [apis.recordAuthWithOAuth2] and [apis.oauth2Submit]).
 
 			// force password auth
 			e.Collection.PasswordAuth.Enabled = true

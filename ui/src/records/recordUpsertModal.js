@@ -77,7 +77,7 @@ function recordUpsertModal(collection, rawRecord, modalSettings) {
             return collection.name == "_superusers";
         },
         get showTabs() {
-            return !data.isNew && data.isAuthCollection && !data.isSuperusersCollection;
+            return !data.isNew && data.isAuthCollection;
         },
         get excludedFields() {
             const result = ["id"];
@@ -848,11 +848,7 @@ function recordUpsertModal(collection, rawRecord, modalSettings) {
             ),
         ),
         () => {
-            if (
-                !data.isNew
-                && !data.isSuperusersCollection
-                && data.activeTab == TAB_AUTH_PROVIDERS
-            ) {
+            if (data.showTabs && data.activeTab == TAB_AUTH_PROVIDERS) {
                 return authProvidersTab(collection, data);
             }
 

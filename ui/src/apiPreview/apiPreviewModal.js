@@ -84,14 +84,12 @@ function apiPreviewModal(collection, settings) {
             }
             : null;
 
-        if (collection.name != "_superusers") {
-            docs["Auth with OAuth2"] = collection.oauth2?.enabled
-                ? async (collection) => {
-                    const { docsAuthWithOAuth2 } = await import("./docsAuthWithOAuth2");
-                    return data.tabEl = docsAuthWithOAuth2(collection);
-                }
-                : null;
-        }
+        docs["Auth with OAuth2"] = collection.oauth2?.enabled
+            ? async (collection) => {
+                const { docsAuthWithOAuth2 } = await import("./docsAuthWithOAuth2");
+                return data.tabEl = docsAuthWithOAuth2(collection);
+            }
+            : null;
 
         docs["Auth with OTP"] = collection.otp?.enabled
             ? async (collection) => {

@@ -35,13 +35,7 @@ export function collectionAuthOptionsTab(upsertData) {
                     ),
                 ),
                 passwordAuthAccordion(upsertData.collection),
-                () => {
-                    if (upsertData.originalCollection?.name == "_superusers") {
-                        return;
-                    }
-
-                    return oauth2Accordion(upsertData.collection);
-                },
+                oauth2Accordion(upsertData.collection),
                 otpAccordion(upsertData.collection),
                 mfaAccordion(upsertData.collection),
             ),

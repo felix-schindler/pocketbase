@@ -222,95 +222,103 @@ export function oauth2Accordion(collection) {
                     t.span({ className: "txt " }, "Add provider"),
                 ),
             ),
-            t.div(
-                { className: "col-sm-12" },
-                t.button(
-                    {
-                        type: "button",
-                        className: () => `btn secondary sm ${data.showMapping ? "" : "transparent"}`,
-                        onclick: () => (data.showMapping = !data.showMapping),
-                    },
-                    t.span({ className: "txt" }, "Optional users create fields mapping"),
-                    t.i({
-                        className: () => (data.showMapping ? "ri-arrow-drop-up-line" : "ri-arrow-drop-down-line"),
-                        ariaHidden: true,
-                    }),
-                ),
-                app.components.slide(
-                    () => data.showMapping,
-                    t.div(
-                        { className: "grid sm m-t-sm" },
+            // the create fields mapping is only applied when creating a new record,
+            // which is never the case for superusers (OAuth2 sign-in can't create them)
+            () => {
+                if (collection.name == "_superusers") {
+                    return;
+                }
+
+                return t.div(
+                    { className: "col-sm-12" },
+                    t.button(
+                        {
+                            type: "button",
+                            className: () => `btn secondary sm ${data.showMapping ? "" : "transparent"}`,
+                            onclick: () => (data.showMapping = !data.showMapping),
+                        },
+                        t.span({ className: "txt" }, "Optional users create fields mapping"),
+                        t.i({
+                            className: () => (data.showMapping ? "ri-arrow-drop-up-line" : "ri-arrow-drop-down-line"),
+                            ariaHidden: true,
+                        }),
+                    ),
+                    app.components.slide(
+                        () => data.showMapping,
                         t.div(
-                            { className: "col-sm-6" },
+                            { className: "grid sm m-t-sm" },
                             t.div(
-                                { className: "field" },
-                                t.label({ htmlFor: uniqueId + ".mappedFields.name" }, "OAuth2 full name"),
-                                app.components.select({
-                                    id: uniqueId + ".mappedFields.name",
-                                    name: "oauth2.mappedFields.name",
-                                    placeholder: "Select field",
-                                    options: () => data.regularFieldOptions,
-                                    value: () => collection.oauth2.mappedFields.name,
-                                    onchange: (selectedOpts) => {
-                                        collection.oauth2.mappedFields.name = selectedOpts?.[0]?.value || "";
-                                    },
-                                }),
+                                { className: "col-sm-6" },
+                                t.div(
+                                    { className: "field" },
+                                    t.label({ htmlFor: uniqueId + ".mappedFields.name" }, "OAuth2 full name"),
+                                    app.components.select({
+                                        id: uniqueId + ".mappedFields.name",
+                                        name: "oauth2.mappedFields.name",
+                                        placeholder: "Select field",
+                                        options: () => data.regularFieldOptions,
+                                        value: () => collection.oauth2.mappedFields.name,
+                                        onchange: (selectedOpts) => {
+                                            collection.oauth2.mappedFields.name = selectedOpts?.[0]?.value || "";
+                                        },
+                                    }),
+                                ),
                             ),
-                        ),
-                        t.div(
-                            { className: "col-sm-6" },
                             t.div(
-                                { className: "field" },
-                                t.label({ htmlFor: uniqueId + ".mappedFields.avatarURL" }, "OAuth2 avatar"),
-                                app.components.select({
-                                    id: uniqueId + ".mappedFields.avatarURL",
-                                    name: "oauth2.mappedFields.avatarURL",
-                                    placeholder: "Select field",
-                                    options: () => data.regularAndFileFieldOptions,
-                                    value: () => collection.oauth2.mappedFields.avatarURL,
-                                    onchange: (selectedOpts) => {
-                                        collection.oauth2.mappedFields.avatarURL = selectedOpts?.[0]?.value || "";
-                                    },
-                                }),
+                                { className: "col-sm-6" },
+                                t.div(
+                                    { className: "field" },
+                                    t.label({ htmlFor: uniqueId + ".mappedFields.avatarURL" }, "OAuth2 avatar"),
+                                    app.components.select({
+                                        id: uniqueId + ".mappedFields.avatarURL",
+                                        name: "oauth2.mappedFields.avatarURL",
+                                        placeholder: "Select field",
+                                        options: () => data.regularAndFileFieldOptions,
+                                        value: () => collection.oauth2.mappedFields.avatarURL,
+                                        onchange: (selectedOpts) => {
+                                            collection.oauth2.mappedFields.avatarURL = selectedOpts?.[0]?.value || "";
+                                        },
+                                    }),
+                                ),
                             ),
-                        ),
-                        t.div(
-                            { className: "col-sm-6" },
                             t.div(
-                                { className: "field" },
-                                t.label({ htmlFor: uniqueId + ".mappedFields.id" }, "OAuth2 id"),
-                                app.components.select({
-                                    id: uniqueId + ".mappedFields.id",
-                                    name: "oauth2.mappedFields.id",
-                                    placeholder: "Select field",
-                                    options: () => data.regularFieldOptions,
-                                    value: () => collection.oauth2.mappedFields.id,
-                                    onchange: (selectedOpts) => {
-                                        collection.oauth2.mappedFields.id = selectedOpts?.[0]?.value || "";
-                                    },
-                                }),
+                                { className: "col-sm-6" },
+                                t.div(
+                                    { className: "field" },
+                                    t.label({ htmlFor: uniqueId + ".mappedFields.id" }, "OAuth2 id"),
+                                    app.components.select({
+                                        id: uniqueId + ".mappedFields.id",
+                                        name: "oauth2.mappedFields.id",
+                                        placeholder: "Select field",
+                                        options: () => data.regularFieldOptions,
+                                        value: () => collection.oauth2.mappedFields.id,
+                                        onchange: (selectedOpts) => {
+                                            collection.oauth2.mappedFields.id = selectedOpts?.[0]?.value || "";
+                                        },
+                                    }),
+                                ),
                             ),
-                        ),
-                        t.div(
-                            { className: "col-sm-6" },
                             t.div(
-                                { className: "field" },
-                                t.label({ htmlFor: uniqueId + ".mappedFields.username" }, "OAuth2 username"),
-                                app.components.select({
-                                    id: uniqueId + ".mappedFields.username",
-                                    name: "oauth2.mappedFields.username",
-                                    placeholder: "Select field",
-                                    options: () => data.regularFieldOptions,
-                                    value: () => collection.oauth2.mappedFields.username,
-                                    onchange: (selectedOpts) => {
-                                        collection.oauth2.mappedFields.username = selectedOpts?.[0]?.value || "";
-                                    },
-                                }),
+                                { className: "col-sm-6" },
+                                t.div(
+                                    { className: "field" },
+                                    t.label({ htmlFor: uniqueId + ".mappedFields.username" }, "OAuth2 username"),
+                                    app.components.select({
+                                        id: uniqueId + ".mappedFields.username",
+                                        name: "oauth2.mappedFields.username",
+                                        placeholder: "Select field",
+                                        options: () => data.regularFieldOptions,
+                                        value: () => collection.oauth2.mappedFields.username,
+                                        onchange: (selectedOpts) => {
+                                            collection.oauth2.mappedFields.username = selectedOpts?.[0]?.value || "";
+                                        },
+                                    }),
+                                ),
                             ),
                         ),
                     ),
-                ),
-            ),
+                );
+            },
         ),
     );
 }

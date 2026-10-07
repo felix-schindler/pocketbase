@@ -93,3 +93,39 @@
     line-height: var(--lineHeight);
     height: 100%;
 }
+
+/* superuser login page OAuth2 providers */
+
+.auth-with-oauth2-form {
+    margin-top: 20px;
+}
+
+.auth-form-separator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: var(--smFontSize);
+    color: var(--surfaceTxtHintColor);
+    text-align: center;
+    &::before,
+    &::after {
+        content: "";
+        flex-grow: 1;
+        height: 1px;
+        background: var(--surfaceAlt2Color);
+    }
+    span {
+        flex-shrink: 0;
+    }
+}
+
+.btn.auth-oauth2-btn {
+    font-size: var(--fontSize);
+    .provider-logo {
+        --size: 18px;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+    }
+}

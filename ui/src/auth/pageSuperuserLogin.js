@@ -21,6 +21,8 @@ export function pageSuperuserLogin(route) {
 
         isAuthMethodsLoading: true,
         isPasswordAuthSubmitting: false,
+        isOAuth2Submitting: false,
+        oauth2Provider: "",
         isOTPRequestSubmitting: false,
         isOTPAuthSubmitting: false,
     });
@@ -47,6 +49,34 @@ export function pageSuperuserLogin(route) {
 
     loadAuthMethods();
 
+    // the password + OAuth2 forms are reused as an MFA fallback
+    // when there is no OTP step to complete the second factor with
+    function passwordAndOAuth2Forms() {
+        return t.div(
+            // note: the reactive children must be passed directly to the
+            // element factory (not nested in an array) - see the shablon diffing
+            () => {
+                if (!data.mfaId) {
+                    return;
+                }
+
+                return t.div(
+                    { className: "alert warning m-b-md txt-center" },
+                    t.div(null, "An additional authentication step is required."),
+                    t.div(null, "Sign in again below with a different method to complete it."),
+                );
+            },
+            authWithPasswordForm(data),
+            () => {
+                if (!data.authMethods?.oauth2?.providers?.length) {
+                    return;
+                }
+
+                return authWithOAuth2Form(data);
+            },
+        );
+    }
+
     return t.div(
         {
             pbEvent: "pageSuperuserLogin",
@@ -71,7 +101,7 @@ export function pageSuperuserLogin(route) {
             }
 
             if (data.authMethods.password?.enabled && !data.mfaId) {
-                return authWithPasswordForm(data);
+                return passwordAndOAuth2Forms();
             }
 
             if (data.authMethods.otp?.enabled) {
@@ -80,6 +110,10 @@ export function pageSuperuserLogin(route) {
                 }
 
                 return authWithOTPForm(data);
+            }
+
+            if (data.mfaId) {
+                return passwordAndOAuth2Forms();
             }
         },
     );
@@ -216,6 +250,98 @@ function authWithPasswordForm(data) {
                 t.span({ className: "txt" }, () => (data.totalSteps > 1 ? "Next" : "Login")),
                 t.i({ className: "ri-arrow-right-line", ariaHidden: true }),
             ),
+        ),
+    );
+}
+
+// Auth with OAuth2
+// -------------------------------------------------------------------
+
+async function authWithOAuth2(data, providerName) {
+    if (data.isOAuth2Submitting) {
+        return;
+    }
+
+    data.isOAuth2Submitting = true;
+    data.oauth2Provider = providerName;
+
+    try {
+        // relies on the SDK realtime implementation, which requires
+        // `${app.pb.buildURL("/api/oauth2-redirect")}` to be registered
+        // as allowed redirect url in the OAuth2 provider app settings
+        await app.pb.collection("_superusers").authWithOAuth2({ provider: providerName });
+
+        app.toasts.removeAll();
+        app.store.errors = null;
+        window.location.hash = "#/";
+    } catch (err) {
+        if (err.status == 401 && err.response?.mfaId) {
+            // continue with the second authentication factor
+            // (the same way as it is handled for the password auth)
+            data.mfaId = err.response.mfaId;
+        } else {
+            app.checkApiError(err);
+        }
+    }
+
+    data.isOAuth2Submitting = false;
+    data.oauth2Provider = "";
+}
+
+function authWithOAuth2Form(data) {
+    return t.div(
+        { className: "auth-with-oauth2-form" },
+        () => {
+            if (!data.authMethods?.password?.enabled) {
+                return;
+            }
+
+            return t.div(
+                { className: "auth-form-separator" },
+                t.span(null, "or continue with"),
+            );
+        },
+        t.div(
+            { className: "grid" },
+            () => {
+                return data.authMethods.oauth2.providers.map((provider) => {
+                    const label = provider.displayName || provider.name;
+
+                    return t.div(
+                        { className: "col-6" },
+                        t.button(
+                            {
+                                type: "button",
+                                className: () => {
+                                    let result = "btn lg block auth-oauth2-btn secondary";
+
+                                    if (data.isOAuth2Submitting && data.oauth2Provider == provider.name) {
+                                        result += " loading";
+                                    }
+
+                                    return result;
+                                },
+                                disabled: () => data.isOAuth2Submitting,
+                                onclick: () => authWithOAuth2(data, provider.name),
+                            },
+                            t.figure(
+                                { className: "provider-logo" },
+                                () => {
+                                    if (provider.logo) {
+                                        return t.img({
+                                            src: "data:image/svg+xml;base64," + btoa(provider.logo),
+                                            alt: label + " logo",
+                                        });
+                                    }
+
+                                    return t.i({ className: app.utils.fallbackProviderIcon, ariaHidden: true });
+                                },
+                            ),
+                            t.span({ className: "txt" }, label),
+                        ),
+                    );
+                });
+            },
         ),
     );
 }
