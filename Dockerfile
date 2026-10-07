@@ -1,22 +1,24 @@
 # syntax=docker/dockerfile:1
 
-# --- admin UI ---
-FROM node:25-alpine AS ui
+# --- admin UI (static files: build once natively, no QEMU) ---
+FROM --platform=$BUILDPLATFORM node:25-alpine AS ui
 WORKDIR /src/ui
 COPY ui/package.json ui/package-lock.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY ui/ ./
 RUN npm run build
 
 # --- backend (same entrypoint as the official release builds;
 # pure Go sqlite, no CGO needed) ---
-FROM golang:1.27-alpine AS backend
+FROM --platform=$BUILDPLATFORM golang:1.27-alpine AS backend
+ARG TARGETARCH
 WORKDIR /src
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY . ./
 COPY --from=ui /src/ui/dist ./ui/dist
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /app/pocketbase ./examples/base
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+  CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o /app/pocketbase ./examples/base
 
 # --- runtime (mirrors ghcr.io/coollabsio/pocketbase so it is a
 # drop-in replacement: same paths, port, entrypoint and healthcheck) ---
