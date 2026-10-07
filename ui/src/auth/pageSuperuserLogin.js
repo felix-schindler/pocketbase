@@ -304,11 +304,12 @@ function authWithOAuth2Form(data) {
         t.div(
             { className: "grid" },
             () => {
-                return data.authMethods.oauth2.providers.map((provider) => {
+                const providers = data.authMethods.oauth2.providers;
+                return providers.map((provider, i) => {
                     const label = provider.displayName || provider.name;
 
                     return t.div(
-                        { className: "col-6" },
+                        { className: app.utils.gridColClass(i, providers.length) },
                         t.button(
                             {
                                 type: "button",

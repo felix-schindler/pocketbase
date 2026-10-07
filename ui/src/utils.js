@@ -1254,6 +1254,38 @@ const utils = {
     },
 
     /**
+     * Returns the grid column class ("col-6"/"col-12") of the item at the
+     * provided index inside a 2-columns grid with total items, ensuring that
+     * the last row is never left half empty (aka. a lone last item spans the
+     * full row and the rest remain at half width).
+     *
+     * @param  {number} index  0-based index of the item
+     * @param  {number} total  total number of the items in the grid
+     * @param  {string} [size] optional grid size modifier (eg. "sm" for col-sm-*)
+     * @return {string}
+     */
+    gridColClass(index, total, size = "") {
+        const isFullRow = index == total - 1 && total % 2 == 1;
+
+        return `col-${size ? size + "-" : ""}${isFullRow ? 12 : 6}`;
+    },
+
+    /**
+     * Returns the grid column class of a filler element (eg. "Add" button)
+     * rendered as the last item of a 2-columns grid with total items.
+     *
+     * The filler takes the leftover half slot when the items end with a lone
+     * last item, otherwise it spans the whole next row.
+     *
+     * @param  {number} total  total number of the items in the grid (excluding the filler)
+     * @param  {string} [size] optional grid size modifier (eg. "sm" for col-sm-*)
+     * @return {string}
+     */
+    gridFillerColClass(total, size = "") {
+        return app.utils.gridColClass(total, total + 1, size);
+    },
+
+    /**
      * Applies a bulk selection from the last bulkSelected model entry
      * to the specified current one (used for "Shift + Click" selection).
      *

@@ -196,7 +196,7 @@ export function oauth2Accordion(collection) {
                 });
             },
             t.div(
-                { className: "col-sm-6" },
+                { className: () => app.utils.gridFillerColClass(data.config.providers.length, "sm") },
                 t.button(
                     {
                         type: "button",

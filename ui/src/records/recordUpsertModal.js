@@ -1447,10 +1447,11 @@ function authProvidersTab(collection, data) {
                     t.div(
                         { className: "grid" },
                         () => {
-                            return local.unlinkedProviders.map((provider) => {
+                            const providers = local.unlinkedProviders;
+                            return providers.map((provider, i) => {
                                 const label = provider.displayName || provider.name;
                                 return t.div(
-                                    { className: "col-6" },
+                                    { className: app.utils.gridColClass(i, providers.length) },
                                     t.button(
                                         {
                                             type: "button",
