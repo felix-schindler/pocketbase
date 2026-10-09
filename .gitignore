@@ -18,3 +18,7 @@ CHANGELOG.html
 CHANGELOG_16_22.html
 CHANGELOG_8_15.html
 LICENSE.html
+
+# prebuilt admin UI (rebuilt by Dockerfile and CI, see ui/embed.go)
+ui/dist/*
+!ui/dist/.gitkeep
