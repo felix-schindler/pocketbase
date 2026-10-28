@@ -5,30 +5,28 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/pocketbase/pocketbase/actions/workflows/release.yaml" target="_blank" rel="noopener"><img src="https://github.com/pocketbase/pocketbase/actions/workflows/release.yaml/badge.svg" alt="build" /></a>
-    <a href="https://github.com/pocketbase/pocketbase/releases" target="_blank" rel="noopener"><img src="https://img.shields.io/github/release/pocketbase/pocketbase.svg" alt="Latest releases" /></a>
-    <a href="https://pkg.go.dev/github.com/pocketbase/pocketbase" target="_blank" rel="noopener"><img src="https://godoc.org/github.com/pocketbase/pocketbase?status.svg" alt="Go package documentation" /></a>
+    <a href="https://pkg.go.dev/ganigeorgiev.com/pocketbase/pocketbase" target="_blank" rel="noopener"><img src="https://godoc.org/ganigeorgiev.com/pocketbase/pocketbase?status.svg" alt="Go package documentation" /></a>
 </p>
 
 [PocketBase](https://pocketbase.io) is an open source Go backend that includes:
 
 - embedded database (_SQLite_) with **realtime subscriptions**
 - built-in **files and users management**
-- convenient **Admin dashboard UI**
+- convenient **Superuser dashboard UI**
 - and simple **REST-ish API**
 
-**For documentation and examples, please visit https://pocketbase.io/docs.**
+**For documentation and examples, please visit https://pocketbase.io/docs .**
 
-> [!WARNING]
-> Please keep in mind that PocketBase is still under active development
-> and therefore full backward compatibility is not guaranteed before reaching v1.0.0.
+> **NB!** Please keep in mind that PocketBase is still under active development
+> and full backward compatibility is not guaranteed before reaching v1.0.0.
+
 
 ## API SDK clients
 
 The easiest way to interact with the PocketBase Web APIs is to use one of the official SDK clients:
 
-- **JavaScript - [pocketbase/js-sdk](https://github.com/pocketbase/js-sdk)** (_Browser, Node.js, React Native_)
-- **Dart - [pocketbase/dart-sdk](https://github.com/pocketbase/dart-sdk)** (_Web, Mobile, Desktop, CLI_)
+- **JavaScript - [pocketbase/js-sdk](https://ganigeorgiev.com/pocketbase/js-sdk)** (_Browser, Node.js, React Native_)
+- **Dart - [pocketbase/dart-sdk](https://ganigeorgiev.com/pocketbase/dart-sdk)** (_Web, Mobile, Desktop, CLI_)
 
 You could also check the recommendations in https://pocketbase.io/docs/how-to-use/.
 
@@ -37,10 +35,10 @@ You could also check the recommendations in https://pocketbase.io/docs/how-to-us
 
 ### Use as standalone app
 
-You could download the prebuilt executable for your platform from the [Releases page](https://github.com/pocketbase/pocketbase/releases).
+You could download the prebuilt executable for your platform from the [Releases page](https://ganigeorgiev.com/pocketbase/pocketbase/releases).
 Once downloaded, extract the archive and run `./pocketbase serve` in the extracted directory.
 
-The prebuilt executables are based on the [`examples/base/main.go` file](https://github.com/pocketbase/pocketbase/blob/master/examples/base/main.go) and comes with the JS VM plugin enabled by default which allows to extend PocketBase with JavaScript (_for more details please refer to [Extend with JavaScript](https://pocketbase.io/docs/js-overview/)_).
+The prebuilt executables are based on the [`examples/base/main.go` file](https://ganigeorgiev.com/pocketbase/pocketbase/files/examples/base/main.go) and comes with the JS VM plugin enabled by default which allows to extend PocketBase with JavaScript (_for more details please refer to [Extend with JavaScript](https://pocketbase.io/docs/js-overview/)_).
 
 ### Use as a Go framework/toolkit
 
@@ -58,8 +56,8 @@ Here is a minimal example:
     import (
         "log"
 
-        "github.com/pocketbase/pocketbase"
-        "github.com/pocketbase/pocketbase/core"
+        "ganigeorgiev.com/pocketbase/pocketbase"
+        "ganigeorgiev.com/pocketbase/pocketbase/core"
     )
 
     func main() {
@@ -135,29 +133,23 @@ go test ./...
 
 Check also the [Testing guide](http://pocketbase.io/docs/testing) to learn how to write your own custom application tests.
 
+
 ## Security
 
-If you discover a security vulnerability within PocketBase, please send an e-mail to **support at pocketbase.io**.
+If you discover a security vulnerability within PocketBase, please submit a [private bug](https://ganigeorgiev.com/pocketbase/discussions/new/Bugs?private=1) OR send an e-mail to **support at pocketbase.io**.
 
-You could find more details in the project [Security policy](https://github.com/pocketbase/pocketbase/security/policy).
+You could find more details in the project [Security policy](https://ganigeorgiev.com/pocketbase/pocketbase/files/SECURITY.md).
+
 
 ## Contributing
 
-PocketBase is free and open source project licensed under the [MIT License](LICENSE.md).
-You are free to do whatever you want with it, even offering it as a paid service.
+PocketBase is free and open source project licensed under the [MIT License](https://ganigeorgiev.com/pocketbase/pocketbase/files/LICENSE.md).
 
-You could help continuing its development by:
+You are free to do whatever you want with it, even offering it as a paid service
+_(if you decide to do the latter, please make it clear that your service is not affiliated with the PocketBase project to avoid people wrongly submitting issues related to your service in the project's tracker)_.
 
-- [Contribute to the source code](CONTRIBUTING.md)
-- [Suggest new features and report issues](https://github.com/pocketbase/pocketbase/issues)
+You could help me by:
 
-Please refrain creating PRs for _new features_ without previously discussing the implementation details.
-PocketBase has a [roadmap](https://github.com/orgs/pocketbase/projects/2) and I try to work on issues in specific order and such PRs often come in out of nowhere and skew all initial planning with tedious back-and-forth communication.
-
-Don't get upset if I close your PR, even if it is well executed and tested. This doesn't mean that it will never be merged.
-Later we can always refer to it and/or take pieces of your implementation when the time comes to work on the issue (don't worry you'll be credited in the release notes).
-
-> [!IMPORTANT]
-> Due to recent LLM spam, PRs are temporary disabled and only existing collaborators can open a PR.
-> If you stumble on a problem that you want to fix, please consider instead opening an issue or discussion with link to your fork _(if not obvious - LLM contributions are not welcome)_.
-> This status may change in the future in case GitHub finally decide to do something about the constant spam, or when I find time to move the project somewhere else.
+- [Report bugs and security issues](https://ganigeorgiev.com/pocketbase/discussions?category=Bugs)
+- [Suggesting new features](https://ganigeorgiev.com/pocketbase/discussions?category=Feature+requests)
+- [Help other people in the discussions](https://ganigeorgiev.com/pocketbase/discussions)
