@@ -1,3 +1,7 @@
+merge:
+	git fetch --no-tags upstream master
+	git merge upstream/master
+
 lint:
 	golangci-lint run -c ./golangci.yml ./...
 
